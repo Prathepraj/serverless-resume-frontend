@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Template 3 - Two Column</title>
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        color: #222;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 30% 70%;
+        padding: 40px;
+        gap: 30px;
+    }
+
+    .left {
+        border-right: 2px solid #ddd;
+        padding-right: 20px;
+    }
+
+    .right {
+        padding-left: 20px;
+    }
+
+    .name {
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .contact {
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        margin-top: 25px;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+
+    .skill-list span {
+        display: inline-block;
+        padding: 6px 10px;
+        margin: 4px;
+        background: #f3f3f3;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+
+    .item {
+        margin-bottom: 18px;
+    }
+
+    .role {
+        font-size: 16px;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .company {
+        font-size: 14px;
+        color: #444;
+    }
+
+    .year {
+        float: right;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .desc {
+        margin-top: 5px;
+        font-size: 13px;
+        color: #555;
+    }
+
+    .clear {
+        clear: both;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LEFT COLUMN -->
+    <div class="left">
+
+        <div class="name">{{name}}</div>
+        <div class="contact">
+            {{email}}<br>
+            {{phone}}<br>
+            {{location}}
+        </div>
+
+        <div class="section-title">Skills</div>
+        <div class="skill-list">
+            {{skills}}
+        </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right">
+
+        <div class="section-title">Experience</div>
+        {{experience}}
+
+        <div class="section-title">Education</div>
+        {{education}}
+
+        <div class="section-title">Projects</div>
+        {{projects}}
+
+    </div>
+
+</div>
+
+</body>
+</html>
