@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Preview 2 - Minimal</title>
+
+<style>
+    body {
+        font-family: 'Helvetica', Arial, sans-serif;
+        margin: 40px;
+        color: #222;
+    }
+
+    .name {
+        font-size: 34px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .contact {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 25px;
+    }
+
+    .section {
+        margin-top: 25px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+
+    .skill-list span {
+        display: inline-block;
+        padding: 4px 8px;
+        margin: 3px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .item {
+        margin-bottom: 15px;
+    }
+
+    .role {
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .company {
+        font-size: 13px;
+        color: #444;
+    }
+
+    .year {
+        float: right;
+        font-size: 13px;
+        color: #777;
+    }
+
+    .clear {
+        clear: both;
+    }
+
+    .desc {
+        margin-top: 5px;
+        color: #555;
+        font-size: 13px;
+    }
+</style>
+</head>
+<body>
+
+<div class="name">John Doe</div>
+<div class="contact">
+    johndoe@example.com | +91 98765 43210 | Bangalore, India
+</div>
+
+<div class="section">
+    <div class="section-title">Skills</div>
+    <div class="skill-list">
+        <span>HTML</span>
+        <span>CSS</span>
+        <span>JavaScript</span>
+        <span>React</span>
+        <span>AWS Lambda</span>
+        <span>S3</span>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">Experience</div>
+
+    <div class="item">
+        <div class="role">Frontend Developer <span class="year">2022 - Present</span></div>
+        <div class="company">TechNova Pvt Ltd</div>
+        <div class="desc">Developed clean UI and reusable components, improved page load speed by 40%.</div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="item">
+        <div class="role">Web Developer Intern <span class="year">2021 - 2022</span></div>
+        <div class="company">NextGen Solutions</div>
+        <div class="desc">Worked on integrating REST APIs and fixing UI issues.</div>
+        <div class="clear"></div>
+    </div>
+
+</div>
+
+<div class="section">
+    <div class="section-title">Education</div>
+
+    <div class="item">
+        <div class="role">B.E. Computer Science <span class="year">2017 - 2021</span></div>
+        <div class="company">Anna University</div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">Projects</div>
+
+    <div class="item">
+        <div class="role">Serverless Resume Generator</div>
+        <div class="desc">Built using AWS Lambda, S3, API Gateway, and Puppeteer for PDF creation.</div>
+    </div>
+
+</div>
+
+</body>
+</html>

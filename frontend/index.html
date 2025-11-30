@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Serverless Resume Generator</title>
+    <link rel="stylesheet" href="style.css"> 
+    <style>
+        /* Basic styles for clarity */
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .template-buttons button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .resume-form textarea, .resume-form input { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div id="content-container">
+        
+        <h1>Choose a Resume Template</h1>
+
+        <div class="template-buttons">
+            <button onclick="showPreview(1)">Template 1</button>
+            <button onclick="showPreview(2)">Template 2</button>
+            <button onclick="showPreview(3)">Template 3</button>
+        </div>
+
+        <h2>Preview</h2>
+        <iframe id="previewFrame" style="width:100%; height:500px; border:1px solid #ccc;"></iframe>
+
+        <h2>Enter Your Details</h2>
+        <form id="resumeForm" onsubmit="generatePDF(event)">
+            <input type="text" name="name" placeholder="Full Name" required><br>
+            <input type="email" name="email" placeholder="Email" required><br>
+            <input type="text" name="phone" placeholder="Phone" required><br>
+            <input type="text" name="location" placeholder="Location" required><br>
+            <textarea name="skills" placeholder="Skills (comma separated)" required></textarea><br>
+            <textarea name="experience" placeholder="Experience HTML"></textarea><br>
+            <textarea name="education" placeholder="Education HTML"></textarea><br>
+            <textarea name="projects" placeholder="Projects HTML"></textarea><br>
+            <input type="hidden" id="selectedTemplate" name="template">
+            <button type="submit">Generate PDF</button>
+            <button type="button" onclick="signOut()">Sign Out</button> 
+        </form>
+    </div>
+
+    <script src="https://unpkg.com/amazon-cognito-identity-js@6.3.1/dist/amazon-cognito-identity.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
