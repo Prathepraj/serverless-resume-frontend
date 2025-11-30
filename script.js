@@ -70,11 +70,18 @@ async function checkAuthStatus() {
 }
 
 // ====================================================================
-// 3. SECURE API CALL WRAPPER 
+// 3. SECURE API CALL WRAPPER (FINAL SAFETY CHECK APPLIED HERE)
 // ====================================================================
 
 async function authenticatedFetch(path, method, body = null) {
     try {
+        // --- FINAL SAFETY CHECK ---
+        if (typeof Amplify === 'undefined' || typeof Amplify.Auth === 'undefined') {
+            console.error("Amplify not defined. Initialization failed or not complete.");
+            throw new Error("Amplify initialization required.");
+        }
+        // --------------------------
+
         const session = await Amplify.Auth.currentSession();
         const idToken = session.getIdToken().getJwtToken(); 
         const headers = { "Content-Type": "application/json", "Authorization": idToken };
@@ -92,7 +99,10 @@ async function authenticatedFetch(path, method, body = null) {
              alert("Session expired or unauthorized. Please sign in again.");
              signOut();
         }
-        throw error;
+        // Only throw the error if it wasn't the Amplify initialization error
+        if (error.message !== "Amplify initialization required.") {
+             throw error;
+        }
     }
 }
 
@@ -107,7 +117,7 @@ function showPreview(templateId) {
     
     const previewFrame = document.getElementById('previewFrame');
     if (previewFrame) {
-        // Path assumes 'templates' is in the root directory
+        // Path assumes 'templates' is in the root directory (after the move)
         previewFrame.src = `templates/preview${templateId}.html`; 
     }
 }
@@ -159,7 +169,7 @@ async function generatePDF(event) {
 // ====================================================================
 
 // 1. Start the initialization chain when the page finishes loading.
-// This calls initializeAmplify, which then calls checkAuthStatus.
+// This calls initializeAmplify, which waits for Amplify to be ready, then calls checkAuthStatus.
 window.onload = initializeAmplify;
 
 // 2. Initialize the template preview 
