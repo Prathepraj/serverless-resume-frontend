@@ -15,6 +15,7 @@ const amplifyConfig = {
         domain: 'eu-north-1otaywhbnf.auth.eu-north-1.amazoncognito.com', 
         
         // Redirect URLs (Must exactly match what you saved in Cognito)
+        // Ensure you use the correct Vercel URL with a trailing slash
         redirectSignIn: 'https://serverless-resume-frontend.vercel.app/', 
         redirectSignOut: 'https://serverless-resume-frontend.vercel.app/',
         
@@ -22,15 +23,26 @@ const amplifyConfig = {
     }
 };
 
-Amplify.configure(amplifyConfig);
-
 // --- Global variable to store the selected template ID ---
-// *** FIX APPLIED HERE: CHANGED 'let' to 'var' to prevent ReferenceError ***
+// *** FIX APPLIED HERE: Using 'var' to prevent the ReferenceError ***
 var selectedTemplateId = 1; 
 
 // ====================================================================
-// 2. AUTHENTICATION HANDLERS (No changes needed)
+// 2. AUTHENTICATION & INITIALIZATION HANDLERS (CRITICAL FIX APPLIED HERE)
 // ====================================================================
+
+// Recursive function to ensure Amplify is defined before configuration
+function initializeAmplify() {
+    if (typeof Amplify !== 'undefined') {
+        Amplify.configure(amplifyConfig);
+        console.log("Amplify initialized successfully.");
+        // Now that Amplify is configured, start the auth check.
+        checkAuthStatus();
+    } else {
+        // If not defined, try again in a short time (50ms delay)
+        setTimeout(initializeAmplify, 50);
+    }
+}
 
 function signIn() {
     Amplify.Auth.federatedSignIn();
@@ -58,7 +70,7 @@ async function checkAuthStatus() {
 }
 
 // ====================================================================
-// 3. SECURE API CALL WRAPPER (No changes needed)
+// 3. SECURE API CALL WRAPPER 
 // ====================================================================
 
 async function authenticatedFetch(path, method, body = null) {
@@ -85,7 +97,7 @@ async function authenticatedFetch(path, method, body = null) {
 }
 
 // ====================================================================
-// 4. API & TEMPLATE FUNCTIONS (No changes needed)
+// 4. API & TEMPLATE FUNCTIONS
 // ====================================================================
 
 // Preview function loads templates/preview#.html
@@ -95,7 +107,8 @@ function showPreview(templateId) {
     
     const previewFrame = document.getElementById('previewFrame');
     if (previewFrame) {
-        previewFrame.src = `templates/preview${templateId}.html`;
+        // Path assumes 'templates' is in the root directory
+        previewFrame.src = `templates/preview${templateId}.html`; 
     }
 }
 
@@ -142,11 +155,12 @@ async function generatePDF(event) {
 }
 
 // ====================================================================
-// 5. INITIALIZATION (No changes needed)
+// 5. INITIALIZATION
 // ====================================================================
 
-// 1. Start the authentication check when the page finishes loading 
-window.onload = checkAuthStatus;
+// 1. Start the initialization chain when the page finishes loading.
+// This calls initializeAmplify, which then calls checkAuthStatus.
+window.onload = initializeAmplify;
 
 // 2. Initialize the template preview 
 document.addEventListener('DOMContentLoaded', () => {
