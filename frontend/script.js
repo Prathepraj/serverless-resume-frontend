@@ -25,10 +25,11 @@ const amplifyConfig = {
 Amplify.configure(amplifyConfig);
 
 // --- Global variable to store the selected template ID ---
-let selectedTemplateId = 1; 
+// *** FIX APPLIED HERE: CHANGED 'let' to 'var' to prevent ReferenceError ***
+var selectedTemplateId = 1; 
 
 // ====================================================================
-// 2. AUTHENTICATION HANDLERS
+// 2. AUTHENTICATION HANDLERS (No changes needed)
 // ====================================================================
 
 function signIn() {
@@ -84,15 +85,14 @@ async function authenticatedFetch(path, method, body = null) {
 }
 
 // ====================================================================
-// 4. API & TEMPLATE FUNCTIONS
+// 4. API & TEMPLATE FUNCTIONS (No changes needed)
 // ====================================================================
 
-// **FIXED PREVIEW LOGIC**
+// Preview function loads templates/preview#.html
 function showPreview(templateId) {
     selectedTemplateId = templateId; 
     document.getElementById('selectedTemplate').value = templateId;
     
-    // The iframe loads the specific preview file from the 'templates' folder
     const previewFrame = document.getElementById('previewFrame');
     if (previewFrame) {
         previewFrame.src = `templates/preview${templateId}.html`;
@@ -112,7 +112,6 @@ async function loadProfileData() {
 async function generatePDF(event) {
     event.preventDefault(); 
     
-    // Capture data from the HTML form 
     const form = document.getElementById('resumeForm');
     const resumeData = { 
         name: form.name.value, 
@@ -143,14 +142,13 @@ async function generatePDF(event) {
 }
 
 // ====================================================================
-// 5. INITIALIZATION
+// 5. INITIALIZATION (No changes needed)
 // ====================================================================
 
-// 1. Start the authentication check when the page finishes loading (CRITICAL for redirect)
+// 1. Start the authentication check when the page finishes loading 
 window.onload = checkAuthStatus;
 
-// 2. Bind the generation function and initialize the template preview
+// 2. Initialize the template preview 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the template preview on load to Template 1
     showPreview(1); 
 });
