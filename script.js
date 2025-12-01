@@ -2,20 +2,20 @@
 // 1. CONFIGURATION (CRITICAL: AWS & API ENDPOINTS)
 // ====================================================================
 
+// Base URL for the API Gateway endpoint
 const API_BASE_URL = 'https://367u3zw691.execute-api.eu-north-1.amazonaws.com/prod';
 
-// Cognito Config (Includes the critical Domain fix for redirect)
+// Cognito Config (Your specific user pool and client ID)
 const amplifyConfig = {
     Auth: {
         region: 'eu-north-1',
         userPoolId: 'eu-north-1_otaYWhBnF',
         userPoolWebClientId: '2ic0m094ag96r8jimm81m0oflh',
         
-        // Hosted UI Domain (This enables the sign-in redirect)
+        // Hosted UI Domain 
         domain: 'eu-north-1otaywhbnf.auth.eu-north-1.amazoncognito.com', 
         
-        // Redirect URLs (Must exactly match what you saved in Cognito)
-        // Ensure you use the correct Vercel URL with a trailing slash
+        // Redirect URLs (Ensure this exactly matches your Vercel URL)
         redirectSignIn: 'https://serverless-resume-frontend.vercel.app/', 
         redirectSignOut: 'https://serverless-resume-frontend.vercel.app/',
         
@@ -23,34 +23,40 @@ const amplifyConfig = {
     }
 };
 
-// --- Global variable to store the selected template ID ---
-// *** FIX APPLIED HERE: Using 'var' to prevent the ReferenceError ***
+// Global variable to store the selected template ID
 var selectedTemplateId = 1; 
 
 // ====================================================================
 // 2. AUTHENTICATION & INITIALIZATION HANDLERS (CRITICAL FIX APPLIED HERE)
 // ====================================================================
 
-// Recursive function to ensure Amplify is defined before configuration
+/**
+ * Recursive function to ensure Amplify is defined before configuration.
+ * This resolves the "Amplify not defined" race condition error.
+ */
 function initializeAmplify() {
+    // Check if the global Amplify object has loaded
     if (typeof Amplify !== 'undefined') {
+        // 1. Configure Amplify once it's available
         Amplify.configure(amplifyConfig);
         console.log("Amplify initialized successfully.");
-        // Now that Amplify is configured, start the auth check.
-        checkAuthStatus();
+        // 2. Proceed to check authentication status
+        checkAuthStatus(); 
     } else {
-        // If not defined, try again in a short time (50ms delay)
+        // If not defined, wait a short time and try again.
         setTimeout(initializeAmplify, 50);
     }
 }
 
 function signIn() {
+    // Uses the configured Hosted UI to initiate the sign-in flow
     Amplify.Auth.federatedSignIn();
 }
 
 async function signOut() {
     try {
         await Amplify.Auth.signOut();
+        // Reload the page to reset the application state
         window.location.reload(); 
     } catch (error) {
         console.log('Error signing out: ', error);
@@ -59,33 +65,47 @@ async function signOut() {
 
 async function checkAuthStatus() {
     try {
+        // Check for an active session
         await Amplify.Auth.currentSession();
         console.log("User is authenticated. Loading application.");
         loadProfileData(); 
         
     } catch (error) {
+        // No session found, initiate sign-in
         console.log("User is not authenticated. Redirecting to sign-in.");
         signIn();
     }
 }
 
 // ====================================================================
-// 3. SECURE API CALL WRAPPER (FINAL SAFETY CHECK APPLIED HERE)
+// 3. SECURE API CALL WRAPPER 
 // ====================================================================
 
+/**
+ * Fetches the JWT from Cognito and uses it to authorize the API Gateway request.
+ */
 async function authenticatedFetch(path, method, body = null) {
     try {
-        // --- FINAL SAFETY CHECK ---
+        // Safety check (redundant but good practice)
         if (typeof Amplify === 'undefined' || typeof Amplify.Auth === 'undefined') {
-            console.error("Amplify not defined. Initialization failed or not complete.");
             throw new Error("Amplify initialization required.");
         }
-        // --------------------------
 
         const session = await Amplify.Auth.currentSession();
+        // Get the ID Token (the JWT used for authorization)
         const idToken = session.getIdToken().getJwtToken(); 
-        const headers = { "Content-Type": "application/json", "Authorization": idToken };
-        const config = { method: method, headers: headers, body: body ? JSON.stringify(body) : null };
+        
+        const headers = { 
+            "Content-Type": "application/json", 
+            "Authorization": idToken // Set the JWT in the Authorization header
+        };
+        
+        const config = { 
+            method: method, 
+            headers: headers, 
+            body: body ? JSON.stringify(body) : null 
+        };
+        
         const response = await fetch(`${API_BASE_URL}${path}`, config);
 
         if (!response.ok) {
@@ -99,10 +119,7 @@ async function authenticatedFetch(path, method, body = null) {
              alert("Session expired or unauthorized. Please sign in again.");
              signOut();
         }
-        // Only throw the error if it wasn't the Amplify initialization error
-        if (error.message !== "Amplify initialization required.") {
-             throw error;
-        }
+        throw error; 
     }
 }
 
@@ -117,7 +134,7 @@ function showPreview(templateId) {
     
     const previewFrame = document.getElementById('previewFrame');
     if (previewFrame) {
-        // Path assumes 'templates' is in the root directory (after the move)
+        // Path assumes 'templates' is in the root directory
         previewFrame.src = `templates/preview${templateId}.html`; 
     }
 }
@@ -125,17 +142,21 @@ function showPreview(templateId) {
 
 async function loadProfileData() {
     try {
+        // Simple API call to fetch existing data (GET request)
         const data = await authenticatedFetch("/profile", "GET");
         console.log("Profile Data Loaded:", data);
+        // Form field update logic would go here
     } catch (error) {
         console.error("Failed to load profile data.");
     }
 }
 
 async function generatePDF(event) {
-    event.preventDefault(); 
+    event.preventDefault(); // Stop the form from submitting normally
     
     const form = document.getElementById('resumeForm');
+    
+    // Package all form data into a single object
     const resumeData = { 
         name: form.name.value, 
         email: form.email.value, 
@@ -149,11 +170,14 @@ async function generatePDF(event) {
     };
 
     try {
+        // POST request to the Lambda function
         const result = await authenticatedFetch("/generate-pdf", "POST", resumeData);
         
-        if (result && result.downloadUrl) {
+        // Check if the response contains the download URL
+        if (result && result.pdfUrl) {
             alert("PDF generated successfully! Starting download.");
-            window.open(result.downloadUrl, '_blank');
+            // Open the signed URL in a new tab to initiate download
+            window.open(result.pdfUrl, '_blank');
         } else {
             alert("PDF generation successful, but no download URL received.");
         }
@@ -169,10 +193,10 @@ async function generatePDF(event) {
 // ====================================================================
 
 // 1. Start the initialization chain when the page finishes loading.
-// This calls initializeAmplify, which waits for Amplify to be ready, then calls checkAuthStatus.
+// This calls initializeAmplify, which waits for Amplify to be ready.
 window.onload = initializeAmplify;
 
-// 2. Initialize the template preview 
+// 2. Initialize the template preview on page load
 document.addEventListener('DOMContentLoaded', () => {
     showPreview(1); 
 });
