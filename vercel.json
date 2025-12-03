@@ -4,16 +4,6 @@
       "NODE_VERSION": "20"
     }
   },
-  "rewrites": [
-    {
-      "source": "/assets/amplify.min.js",
-      "destination": "/assets/amplify.min.js"
-    },
-    {
-      "source": "/assets/script.js",
-      "destination": "/assets/script.js"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
