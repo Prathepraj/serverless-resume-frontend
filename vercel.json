@@ -1,4 +1,9 @@
 {
+  "build": {
+    "env": {
+      "NODE_VERSION": "20"
+    }
+  },
   "rewrites": [
     {
       "source": "/aws-amplify.min.js",
@@ -7,6 +12,17 @@
     {
       "source": "/script.js",
       "destination": "/script.js"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
     }
   ]
 }
