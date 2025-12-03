@@ -44,7 +44,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js"></script>
     
-    <script src="script.js" defer></script>
+    <script src="script.js"></script>
+
+    <script>
+        // Check if the Amplify SDK is available before calling functions defined in script.js
+        if (typeof Amplify !== 'undefined') {
+            initializeAmplify(); 
+            // Also initialize the preview template immediately
+            document.addEventListener('DOMContentLoaded', () => {
+                showPreview(1);
+            });
+        } else {
+            console.error("Initialization error: Amplify SDK failed to load.");
+        }
+    </script>
     
 </body>
 </html>

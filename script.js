@@ -30,19 +30,14 @@ var selectedTemplateId = 1;
 // ====================================================================
 
 /**
- * Initializes Amplify configuration and checks authentication status.
+ * Initializes Amplify configuration. This is called immediately from index.html.
  */
 function initializeAmplify() {
-    // The 'defer' attribute in the HTML guarantees Amplify is defined here.
-    if (typeof Amplify !== 'undefined') {
-        Amplify.configure(amplifyConfig);
-        console.log("Amplify initialized successfully.");
-        // Start the auth check.
-        checkAuthStatus();
-    } else {
-        // This check should no longer fail due to the 'defer' attribute!
-        console.error("Amplify object is not available. Initialization failed.");
-    }
+    // Rely on the HTML script order to ensure Amplify is defined.
+    Amplify.configure(amplifyConfig);
+    console.log("Amplify configured successfully.");
+    // Start the auth check.
+    checkAuthStatus();
 }
 
 function signIn() {
@@ -83,6 +78,7 @@ async function checkAuthStatus() {
  */
 async function authenticatedFetch(path, method, body = null) {
     try {
+        // This check remains, but should pass now due to correct initialization order.
         if (typeof Amplify === 'undefined' || typeof Amplify.Auth === 'undefined') {
             throw new Error("Amplify initialization required.");
         }
@@ -176,15 +172,5 @@ async function generatePDF(event) {
     }
 }
 
-// ====================================================================
-// 5. INITIALIZATION (Triggered by DOMContentLoaded, guaranteed by 'defer' in HTML)
-// ====================================================================
-
-// Start the initialization chain when the DOM is fully loaded.
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Amplify and check authentication status
-    initializeAmplify();
-    
-    // 2. Initialize the template preview
-    showPreview(1); 
-});
+// 5. INITIALIZATION - REMOVED THE CONFLICTING DOMCONTENTLOADED LISTENER. 
+// The call to initializeAmplify() is now handled directly by the script block in index.html.
