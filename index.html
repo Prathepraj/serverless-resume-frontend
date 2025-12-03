@@ -42,30 +42,21 @@
         </form>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js"></script>
+    <script src="aws-amplify.min.js"></script>
     
     <script src="script.js"></script>
 
     <script>
-        // Check if the Amplify object is defined, and if not, keep trying.
-        // We use a longer timeout (100ms) to ensure the browser has time to finish the CDN script.
-        function checkAmplifyReady() {
-            if (typeof Amplify !== 'undefined') {
-                // SUCCESS: Amplify is finally available!
-                initializeAmplifyWithConfig(amplifyConfig); 
-             
-                document.addEventListener('DOMContentLoaded', () => {
-                    showPreview(1);
-                });
-            } else {
-                // FAIL: Not ready yet. Try again in 100ms.
-                console.log("Amplify object still missing. Retrying initialization...");
-                setTimeout(checkAmplifyReady, 100); 
-            }
+        // We revert to the immediate check, trusting that the local file loads synchronously.
+        if (typeof Amplify !== 'undefined') {
+            initializeAmplifyWithConfig(amplifyConfig); 
+         
+            document.addEventListener('DOMContentLoaded', () => {
+                showPreview(1);
+            });
+        } else {
+            console.error("FATAL ERROR: Local Amplify file failed to load. Check file path.");
         }
-        
-        // Start the recursive check immediately after all scripts are parsed.
-        checkAmplifyReady();
     </script>
     
 </body>

@@ -33,7 +33,7 @@ var selectedTemplateId = 1;
  * Initializes Amplify configuration. Called only after the SDK loads.
  */
 function initializeAmplifyWithConfig(config) {
-    // Rely on the HTML script loader and polling to guarantee Amplify is defined here.
+    // Rely on the HTML script loading to guarantee Amplify is defined here.
     Amplify.configure(config);
     console.log("Amplify configured successfully.");
     // Start the auth check.
