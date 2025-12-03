@@ -171,5 +171,3 @@ async function generatePDF(event) {
         alert("Error generating PDF. Check the console for API error details.");
     }
 }
-
-// 5. INITIALIZATION - The initialization is now controlled by the dynamic script loader and polling in index.html.

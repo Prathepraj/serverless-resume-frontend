@@ -42,44 +42,30 @@
         </form>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js"></script>
+    
     <script src="script.js"></script>
 
     <script>
-        function loadAmplifySDK() {
-            const script = document.createElement('script');
-            script.src = "https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js";
-            
-            script.onload = function() {
-                // Function to recursively check if Amplify is ready
-                function checkAmplifyReady() {
-                    if (typeof Amplify !== 'undefined') {
-                        // SUCCESS: Amplify is finally available!
-                        initializeAmplifyWithConfig(amplifyConfig); 
-                     
-                        document.addEventListener('DOMContentLoaded', () => {
-                            showPreview(1);
-                        });
-                    } else {
-                        // FAIL: Not ready yet. Try again in 50ms.
-                        console.log("Amplify object still missing after load. Polling...");
-                        setTimeout(checkAmplifyReady, 50);
-                    }
-                }
-                
-                // Start the recursive check immediately after the script fires its onload event
-                checkAmplifyReady();
-            };
-            
-            // Handle CDN script failure
-            script.onerror = function() {
-                console.error("Fatal Error: Could not load AWS Amplify SDK from CDN.");
-            };
-            
-            document.head.appendChild(script);
+        // Check if the Amplify object is defined, and if not, keep trying.
+        // We use a longer timeout (100ms) to ensure the browser has time to finish the CDN script.
+        function checkAmplifyReady() {
+            if (typeof Amplify !== 'undefined') {
+                // SUCCESS: Amplify is finally available!
+                initializeAmplifyWithConfig(amplifyConfig); 
+             
+                document.addEventListener('DOMContentLoaded', () => {
+                    showPreview(1);
+                });
+            } else {
+                // FAIL: Not ready yet. Try again in 100ms.
+                console.log("Amplify object still missing. Retrying initialization...");
+                setTimeout(checkAmplifyReady, 100); 
+            }
         }
         
-        // Start the load process when the DOM is ready
-        document.addEventListener('DOMContentLoaded', loadAmplifySDK);
+        // Start the recursive check immediately after all scripts are parsed.
+        checkAmplifyReady();
     </script>
     
 </body>
