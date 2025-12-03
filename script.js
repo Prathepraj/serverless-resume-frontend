@@ -2,10 +2,9 @@
 // 1. CONFIGURATION (CRITICAL: AWS & API ENDPOINTS)
 // ====================================================================
 
-// Base URL for the API Gateway endpoint
 const API_BASE_URL = 'https://367u3zw691.execute-api.eu-north-1.amazonaws.com/prod';
 
-// Cognito Config (Your specific user pool and client ID)
+// Cognito Config
 const amplifyConfig = {
     Auth: {
         region: 'eu-north-1',
@@ -15,7 +14,7 @@ const amplifyConfig = {
         // Hosted UI Domain 
         domain: 'eu-north-1otaywhbnf.auth.eu-north-1.amazoncognito.com', 
         
-        // Redirect URLs (Ensure this exactly matches your Vercel URL)
+        // Redirect URLs
         redirectSignIn: 'https://serverless-resume-frontend.vercel.app/', 
         redirectSignOut: 'https://serverless-resume-frontend.vercel.app/',
         
@@ -23,28 +22,25 @@ const amplifyConfig = {
     }
 };
 
-// Global variable to store the selected template ID
+// --- Global variable to store the selected template ID ---
 var selectedTemplateId = 1; 
 
 // ====================================================================
-// 2. AUTHENTICATION & INITIALIZATION HANDLERS (CRITICAL FIX APPLIED HERE)
+// 2. AUTHENTICATION & INITIALIZATION HANDLERS
 // ====================================================================
 
 /**
- * Recursive function to ensure Amplify is defined before configuration.
- * This resolves the "Amplify not defined" race condition error.
+ * Initializes Amplify configuration and checks authentication status.
  */
 function initializeAmplify() {
-    // Check if the global Amplify object has loaded
     if (typeof Amplify !== 'undefined') {
-        // 1. Configure Amplify once it's available
         Amplify.configure(amplifyConfig);
         console.log("Amplify initialized successfully.");
-        // 2. Proceed to check authentication status
-        checkAuthStatus(); 
+        // Start the auth check.
+        checkAuthStatus();
     } else {
-        // If not defined, wait a short time and try again.
-        setTimeout(initializeAmplify, 50);
+        // If Amplify is still not defined, something is wrong with script loading order.
+        console.error("Amplify object is not available. Initialization failed.");
     }
 }
 
@@ -86,7 +82,6 @@ async function checkAuthStatus() {
  */
 async function authenticatedFetch(path, method, body = null) {
     try {
-        // Safety check (redundant but good practice)
         if (typeof Amplify === 'undefined' || typeof Amplify.Auth === 'undefined') {
             throw new Error("Amplify initialization required.");
         }
@@ -119,7 +114,7 @@ async function authenticatedFetch(path, method, body = null) {
              alert("Session expired or unauthorized. Please sign in again.");
              signOut();
         }
-        throw error; 
+        throw error;
     }
 }
 
@@ -127,14 +122,12 @@ async function authenticatedFetch(path, method, body = null) {
 // 4. API & TEMPLATE FUNCTIONS
 // ====================================================================
 
-// Preview function loads templates/preview#.html
 function showPreview(templateId) {
     selectedTemplateId = templateId; 
     document.getElementById('selectedTemplate').value = templateId;
     
     const previewFrame = document.getElementById('previewFrame');
     if (previewFrame) {
-        // Path assumes 'templates' is in the root directory
         previewFrame.src = `templates/preview${templateId}.html`; 
     }
 }
@@ -142,21 +135,18 @@ function showPreview(templateId) {
 
 async function loadProfileData() {
     try {
-        // Simple API call to fetch existing data (GET request)
         const data = await authenticatedFetch("/profile", "GET");
         console.log("Profile Data Loaded:", data);
-        // Form field update logic would go here
     } catch (error) {
         console.error("Failed to load profile data.");
     }
 }
 
 async function generatePDF(event) {
-    event.preventDefault(); // Stop the form from submitting normally
+    event.preventDefault();
     
     const form = document.getElementById('resumeForm');
     
-    // Package all form data into a single object
     const resumeData = { 
         name: form.name.value, 
         email: form.email.value, 
@@ -170,13 +160,10 @@ async function generatePDF(event) {
     };
 
     try {
-        // POST request to the Lambda function
         const result = await authenticatedFetch("/generate-pdf", "POST", resumeData);
         
-        // Check if the response contains the download URL
         if (result && result.pdfUrl) {
             alert("PDF generated successfully! Starting download.");
-            // Open the signed URL in a new tab to initiate download
             window.open(result.pdfUrl, '_blank');
         } else {
             alert("PDF generation successful, but no download URL received.");
@@ -188,15 +175,5 @@ async function generatePDF(event) {
     }
 }
 
-// ====================================================================
-// 5. INITIALIZATION
-// ====================================================================
-
-// 1. Start the initialization chain when the page finishes loading.
-// This calls initializeAmplify, which waits for Amplify to be ready.
-window.onload = initializeAmplify;
-
-// 2. Initialize the template preview on page load
-document.addEventListener('DOMContentLoaded', () => {
-    showPreview(1); 
-});
+// ⚠️ Note: Initialization calls (initializeAmplify() and showPreview()) 
+// are now handled by a script block in index.html to ensure execution order.

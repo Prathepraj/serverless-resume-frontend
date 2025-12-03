@@ -43,8 +43,14 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js"></script>
-    
     <script src="script.js"></script>
 
-    </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAmplify();
+            showPreview(1); 
+        });
+    </script>
+    
+</body>
 </html>
