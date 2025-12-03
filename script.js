@@ -33,13 +33,14 @@ var selectedTemplateId = 1;
  * Initializes Amplify configuration and checks authentication status.
  */
 function initializeAmplify() {
+    // The 'defer' attribute in the HTML guarantees Amplify is defined here.
     if (typeof Amplify !== 'undefined') {
         Amplify.configure(amplifyConfig);
         console.log("Amplify initialized successfully.");
         // Start the auth check.
         checkAuthStatus();
     } else {
-        // If Amplify is still not defined, something is wrong with script loading order.
+        // This check should no longer fail due to the 'defer' attribute!
         console.error("Amplify object is not available. Initialization failed.");
     }
 }
@@ -175,5 +176,15 @@ async function generatePDF(event) {
     }
 }
 
-// ⚠️ Note: Initialization calls (initializeAmplify() and showPreview()) 
-// are now handled by a script block in index.html to ensure execution order.
+// ====================================================================
+// 5. INITIALIZATION (Triggered by DOMContentLoaded, guaranteed by 'defer' in HTML)
+// ====================================================================
+
+// Start the initialization chain when the DOM is fully loaded.
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize Amplify and check authentication status
+    initializeAmplify();
+    
+    // 2. Initialize the template preview
+    showPreview(1); 
+});
