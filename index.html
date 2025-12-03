@@ -42,21 +42,26 @@
         </form>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js"></script>
-    
     <script src="script.js"></script>
 
     <script>
-        // Check if the Amplify SDK is available before calling functions defined in script.js
-        if (typeof Amplify !== 'undefined') {
-            initializeAmplify(); 
-            // Also initialize the preview template immediately
-            document.addEventListener('DOMContentLoaded', () => {
-                showPreview(1);
-            });
-        } else {
-            console.error("Initialization error: Amplify SDK failed to load.");
+        function loadAmplifySDK() {
+            const script = document.createElement('script');
+            script.src = "https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js";
+            
+            // This event runs ONLY after the SDK is loaded and executed.
+            script.onload = function() {
+                // Call functions defined in script.js
+                initializeAmplify();
+                document.addEventListener('DOMContentLoaded', () => {
+                    showPreview(1);
+                });
+            };
+            document.head.appendChild(script);
         }
+        
+        // Start the load process when the DOM is ready
+        document.addEventListener('DOMContentLoaded', loadAmplifySDK);
     </script>
     
 </body>

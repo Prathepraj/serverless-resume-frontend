@@ -30,10 +30,10 @@ var selectedTemplateId = 1;
 // ====================================================================
 
 /**
- * Initializes Amplify configuration. This is called immediately from index.html.
+ * Initializes Amplify configuration. This is called only after the SDK loads.
  */
 function initializeAmplify() {
-    // Rely on the HTML script order to ensure Amplify is defined.
+    // The HTML now guarantees Amplify is defined when this runs.
     Amplify.configure(amplifyConfig);
     console.log("Amplify configured successfully.");
     // Start the auth check.
@@ -78,7 +78,7 @@ async function checkAuthStatus() {
  */
 async function authenticatedFetch(path, method, body = null) {
     try {
-        // This check remains, but should pass now due to correct initialization order.
+        // The check remains, but should pass now due to correct initialization order.
         if (typeof Amplify === 'undefined' || typeof Amplify.Auth === 'undefined') {
             throw new Error("Amplify initialization required.");
         }
@@ -172,5 +172,4 @@ async function generatePDF(event) {
     }
 }
 
-// 5. INITIALIZATION - REMOVED THE CONFLICTING DOMCONTENTLOADED LISTENER. 
-// The call to initializeAmplify() is now handled directly by the script block in index.html.
+// 5. INITIALIZATION - The initialization is now controlled by the dynamic script loader in index.html.
