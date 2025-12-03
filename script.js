@@ -4,7 +4,7 @@
 
 const API_BASE_URL = 'https://367u3zw691.execute-api.eu-north-1.amazonaws.com/prod';
 
-// Cognito Config
+// Cognito Config (MUST be available globally for index.html to read)
 const amplifyConfig = {
     Auth: {
         region: 'eu-north-1',
@@ -30,11 +30,11 @@ var selectedTemplateId = 1;
 // ====================================================================
 
 /**
- * Initializes Amplify configuration. This is called only after the SDK loads.
+ * Initializes Amplify configuration. Called only after the SDK loads.
  */
-function initializeAmplify() {
-    // The HTML now guarantees Amplify is defined when this runs.
-    Amplify.configure(amplifyConfig);
+function initializeAmplifyWithConfig(config) {
+    // Rely on the HTML script loader to guarantee Amplify is defined here.
+    Amplify.configure(config);
     console.log("Amplify configured successfully.");
     // Start the auth check.
     checkAuthStatus();
@@ -78,7 +78,7 @@ async function checkAuthStatus() {
  */
 async function authenticatedFetch(path, method, body = null) {
     try {
-        // The check remains, but should pass now due to correct initialization order.
+        // This check remains as a final guardrail.
         if (typeof Amplify === 'undefined' || typeof Amplify.Auth === 'undefined') {
             throw new Error("Amplify initialization required.");
         }
@@ -173,3 +173,4 @@ async function generatePDF(event) {
 }
 
 // 5. INITIALIZATION - The initialization is now controlled by the dynamic script loader in index.html.
+// No event listeners or setup code at the bottom of this file.
