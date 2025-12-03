@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/aws-amplify.min.js",
+      "destination": "/aws-amplify.min.js"
+    },
+    {
+      "source": "/script.js",
+      "destination": "/script.js"
+    }
+  ]
+}
