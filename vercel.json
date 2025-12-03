@@ -6,12 +6,12 @@
   },
   "rewrites": [
     {
-      "source": "/amplify.min.js",
-      "destination": "/amplify.min.js"
+      "source": "/assets/amplify.min.js",
+      "destination": "/assets/amplify.min.js"
     },
     {
-      "source": "/script.js",
-      "destination": "/script.js"
+      "source": "/assets/script.js",
+      "destination": "/assets/script.js"
     }
   ],
   "headers": [
