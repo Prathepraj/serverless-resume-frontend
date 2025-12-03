@@ -49,20 +49,25 @@
             const script = document.createElement('script');
             script.src = "https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js";
             
-            // This event runs ONLY after the SDK is loaded and executed.
             script.onload = function() {
-                // Synchronous check to ensure Amplify is now available
-                if (typeof Amplify !== 'undefined') {
-                    // Call the renamed function from script.js, passing the config data.
-                    initializeAmplifyWithConfig(amplifyConfig); 
-                 
-                    // Also initialize the template preview
-                    document.addEventListener('DOMContentLoaded', () => {
-                        showPreview(1);
-                    });
-                } else {
-                    console.error("Fatal Error: Amplify object remains undefined after script load.");
+                // Function to recursively check if Amplify is ready
+                function checkAmplifyReady() {
+                    if (typeof Amplify !== 'undefined') {
+                        // SUCCESS: Amplify is finally available!
+                        initializeAmplifyWithConfig(amplifyConfig); 
+                     
+                        document.addEventListener('DOMContentLoaded', () => {
+                            showPreview(1);
+                        });
+                    } else {
+                        // FAIL: Not ready yet. Try again in 50ms.
+                        console.log("Amplify object still missing after load. Polling...");
+                        setTimeout(checkAmplifyReady, 50);
+                    }
                 }
+                
+                // Start the recursive check immediately after the script fires its onload event
+                checkAmplifyReady();
             };
             
             // Handle CDN script failure
