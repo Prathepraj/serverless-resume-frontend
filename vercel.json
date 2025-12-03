@@ -6,8 +6,8 @@
   },
   "rewrites": [
     {
-      "source": "/aws-amplify.min.js",
-      "destination": "/aws-amplify.min.js"
+      "source": "/amplify.min.js",
+      "destination": "/amplify.min.js"
     },
     {
       "source": "/script.js",
