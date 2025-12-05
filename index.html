@@ -50,19 +50,17 @@
     
     <script>
         // ====================================================================
-        // ✅ FIX: Manually reference the global Amplify object provided by the UMD bundle.
+        // ✅ FIX: Verify the global Amplify object is defined before use
         // ====================================================================
-        const Amplify = window['aws-amplify'];
-
-        if (!Amplify) {
-            document.getElementById('auth-status').textContent = 'Fatal Error: AWS Amplify library failed to load.';
-            console.error('Amplify object not found. Check the script file name and path.');
-            // Stop execution if Amplify isn't available
-            throw new Error('AWS Amplify not found.');
+        
+        if (typeof Amplify === 'undefined' || typeof Amplify.configure !== 'function') {
+            document.getElementById('auth-status').textContent = 'Fatal Error: AWS Amplify library failed to load or is incomplete.';
+            console.error('Amplify object not found or incomplete. Check the script file content and ensure it loads before this block.');
+            throw new Error('AWS Amplify not initialized.');
         }
 
         // ====================================================================
-        // AWS CONFIGURATION - ALL PLACEHOLDERS FILLED
+        // AWS CONFIGURATION
         // ====================================================================
         const AWS_CONFIG = {
             Auth: {
@@ -80,7 +78,7 @@
                     region: 'eu-north-1',
                     custom_header: async () => {
                         try {
-                            // Amplify object is now guaranteed to exist here
+                            // Now safe to use Amplify.Auth
                             const session = await Amplify.Auth.currentSession();
                             return { Authorization: session.getIdToken().getJwtToken() };
                         } catch (e) {
@@ -187,6 +185,7 @@
 
         // --- Initialization ---
         
+        // This is line 190 where the error previously occurred
         Amplify.configure(AWS_CONFIG); 
         checkAuthStatus();
 
