@@ -46,16 +46,17 @@
         </form>
     </div>
 
-    <script src="aws-amplify.js"></script>
+    <script src="https://unpkg.com/aws-amplify@latest/dist/aws-amplify.min.js"></script>
     
     <script>
         // ====================================================================
-        // ✅ FIX: Verify the global Amplify object is defined before use
+        // VERIFY: The global Amplify object is now expected to be defined
         // ====================================================================
         
         if (typeof Amplify === 'undefined' || typeof Amplify.configure !== 'function') {
-            document.getElementById('auth-status').textContent = 'Fatal Error: AWS Amplify library failed to load or is incomplete.';
-            console.error('Amplify object not found or incomplete. Check the script file content and ensure it loads before this block.');
+            // If this still triggers, there is a serious network block or browser issue.
+            document.getElementById('auth-status').textContent = 'Fatal Error: AWS Amplify library failed to load from CDN.';
+            console.error('Amplify object not found or incomplete. Check the network connection.');
             throw new Error('AWS Amplify not initialized.');
         }
 
@@ -78,7 +79,6 @@
                     region: 'eu-north-1',
                     custom_header: async () => {
                         try {
-                            // Now safe to use Amplify.Auth
                             const session = await Amplify.Auth.currentSession();
                             return { Authorization: session.getIdToken().getJwtToken() };
                         } catch (e) {
@@ -185,7 +185,6 @@
 
         // --- Initialization ---
         
-        // This is line 190 where the error previously occurred
         Amplify.configure(AWS_CONFIG); 
         checkAuthStatus();
 
