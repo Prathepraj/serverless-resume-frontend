@@ -25,13 +25,32 @@
     <script>
         // Check for the Amplify object immediately after script tags are processed.
         if (typeof Amplify !== 'undefined') {
-            initializeAmplifyWithConfig(amplifyConfig); 
+            
+            // Configuration is now defined here
+            const amplifyConfig = {
+                Auth: {
+                    region: 'eu-north-1',
+                    userPoolId: 'eu-north-1_otaYWhBnF',
+                    userPoolWebClientId: '2ic0m094ag96r8jimm81m0oflh',
+                    domain: 'eu-north-1otaywhbnf.auth.eu-north-1.amazoncognito.com', 
+                    redirectSignIn: 'https://serverless-resume-frontend.vercel.app/', 
+                    redirectSignOut: 'https://serverless-resume-frontend.vercel.app/',
+                    responseType: 'code' 
+                }
+            };
+
+            // Call Amplify.configure directly here
+            Amplify.configure(amplifyConfig);
+            console.log("Amplify configured successfully (Inline).");
+            
+            // Start the auth check defined in script.js
+            checkAuthStatus(); 
          
             document.addEventListener('DOMContentLoaded', () => {
                 showPreview(1);
             });
         } else {
-            console.error("FATAL ERROR: Local Amplify file failed to load. Check file path: /amplify.min.js");
+            console.error("FATAL ERROR: Amplify object remains undefined.");
         }
     </script>
     

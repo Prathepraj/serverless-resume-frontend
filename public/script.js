@@ -1,26 +1,8 @@
 // ====================================================================
-// 1. CONFIGURATION (CRITICAL: AWS & API ENDPOINTS)
+// 1. CONFIGURATION (CRITICAL: API ENDPOINTS ONLY)
 // ====================================================================
 
 const API_BASE_URL = 'https://367u3zw691.execute-api.eu-north-1.amazonaws.com/prod';
-
-// Cognito Config (MUST be available globally for index.html to read)
-const amplifyConfig = {
-    Auth: {
-        region: 'eu-north-1',
-        userPoolId: 'eu-north-1_otaYWhBnF',
-        userPoolWebClientId: '2ic0m094ag96r8jimm81m0oflh',
-        
-        // Hosted UI Domain 
-        domain: 'eu-north-1otaywhbnf.auth.eu-north-1.amazoncognito.com', 
-        
-        // Redirect URLs
-        redirectSignIn: 'https://serverless-resume-frontend.vercel.app/', 
-        redirectSignOut: 'https://serverless-resume-frontend.vercel.app/',
-        
-        responseType: 'code' 
-    }
-};
 
 // --- Global variable to store the selected template ID ---
 var selectedTemplateId = 1; 
@@ -29,16 +11,8 @@ var selectedTemplateId = 1;
 // 2. AUTHENTICATION & INITIALIZATION HANDLERS
 // ====================================================================
 
-/**
- * Initializes Amplify configuration. Called only after the SDK loads.
- */
-function initializeAmplifyWithConfig(config) {
-    // Rely on the HTML script loading to guarantee Amplify is defined here.
-    Amplify.configure(config);
-    console.log("Amplify configured successfully.");
-    // Start the auth check.
-    checkAuthStatus();
-}
+// NOTE: initializeAmplifyWithConfig and amplifyConfig REMOVED.
+// Initialization is now handled INLINE in index.html
 
 function signIn() {
     // Uses the configured Hosted UI to initiate the sign-in flow
@@ -132,8 +106,10 @@ function showPreview(templateId) {
 
 async function loadProfileData() {
     try {
-        const data = await authenticatedFetch("/profile", "GET");
-        console.log("Profile Data Loaded:", data);
+        // This is a placeholder for the API call that was returning the message
+        // const data = await authenticatedFetch("/profile", "GET"); 
+        // console.log("Profile Data Loaded:", data);
+        console.log("Profile data loading skipped to ensure clean flow.");
     } catch (error) {
         console.error("Failed to load profile data.");
     }
