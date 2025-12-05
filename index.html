@@ -16,6 +16,7 @@
     <div id="content-container">
         
         <h1>Choose a Resume Template</h1>
+        
         </div>
 
     <script src="/amplify.min.js"></script>
@@ -23,10 +24,10 @@
     <script src="/script.js"></script>
 
     <script>
-        // Check for the Amplify object immediately after script tags are processed.
+        // Check for the Amplify object
         if (typeof Amplify !== 'undefined') {
             
-            // Configuration is now defined here
+            // Configuration must be defined before calling checkAuthStatus
             const amplifyConfig = {
                 Auth: {
                     region: 'eu-north-1',
@@ -39,18 +40,18 @@
                 }
             };
 
-            // Call Amplify.configure directly here
             Amplify.configure(amplifyConfig);
-            console.log("Amplify configured successfully (Inline).");
+            console.log("Amplify configured successfully (Inline & Forced).");
             
-            // Start the auth check defined in script.js
+            // Force the authentication check, which initiates redirect if not logged in
             checkAuthStatus(); 
          
             document.addEventListener('DOMContentLoaded', () => {
                 showPreview(1);
             });
         } else {
-            console.error("FATAL ERROR: Amplify object remains undefined.");
+            console.error("FATAL ERROR: Amplify object remains undefined. Check Vercel deployment.");
+            // If Amplify is missing, we can't do anything, but the API message shouldn't be showing.
         }
     </script>
     
