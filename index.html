@@ -36,8 +36,8 @@
             <input type="text" name="phone" placeholder="Phone" required><br>
             <input type="text" name="location" placeholder="Location" required><br>
             <textarea name="skills" placeholder="Skills (comma separated)" required></textarea><br>
-            <textarea name="experience" placeholder="Experience HTML (use <ul>/<li> tags)"></textarea><br>
-            <textarea name="education" placeholder="Education HTML (use <ul>/<li> tags)"></textarea><br>
+            <textarea name="experience" placeholder="Experience HTML (use &lt;ul&gt;/&lt;li&gt; tags)"></textarea><br>
+            <textarea name="education" placeholder="Education HTML (use &lt;ul&gt;/&lt;li&gt; tags)"></textarea><br>
             <textarea name="projects" placeholder="Projects HTML (optional)"></textarea><br>
             <input type="hidden" id="selectedTemplate" name="template" value="1">
             <button type="submit">Generate PDF</button>
@@ -46,10 +46,23 @@
         </form>
     </div>
 
-    <script src="aws-amplify.min.js"></script>
+    <script src="aws-amplify.js"></script>
+    
     <script>
         // ====================================================================
-        // ✅ AWS CONFIGURATION - ALL PLACEHOLDERS FILLED
+        // ✅ FIX: Manually reference the global Amplify object provided by the UMD bundle.
+        // ====================================================================
+        const Amplify = window['aws-amplify'];
+
+        if (!Amplify) {
+            document.getElementById('auth-status').textContent = 'Fatal Error: AWS Amplify library failed to load.';
+            console.error('Amplify object not found. Check the script file name and path.');
+            // Stop execution if Amplify isn't available
+            throw new Error('AWS Amplify not found.');
+        }
+
+        // ====================================================================
+        // AWS CONFIGURATION - ALL PLACEHOLDERS FILLED
         // ====================================================================
         const AWS_CONFIG = {
             Auth: {
@@ -67,6 +80,7 @@
                     region: 'eu-north-1',
                     custom_header: async () => {
                         try {
+                            // Amplify object is now guaranteed to exist here
                             const session = await Amplify.Auth.currentSession();
                             return { Authorization: session.getIdToken().getJwtToken() };
                         } catch (e) {
@@ -131,7 +145,7 @@
                 const binaryString = atob(base64PDF);
                 const len = binaryString.length;
                 const bytes = new Uint8Array(len);
-                for (let i = 0; i < len; i++)        {
+                for (let i = 0; i < len; i++) {
                     bytes[i] = binaryString.charCodeAt(i);
                 }
                 const blob = new Blob([bytes], { type: 'application/pdf' });
@@ -177,5 +191,5 @@
         checkAuthStatus();
 
     </script>
-    </body>
+</body>
 </html>
