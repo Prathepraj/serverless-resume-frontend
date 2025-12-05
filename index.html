@@ -50,13 +50,12 @@
     
     <script>
         // ====================================================================
-        // VERIFY: The global Amplify object is now expected to be defined
+        // VERIFY: This check ensures we have the Amplify object before calling .configure()
         // ====================================================================
         
         if (typeof Amplify === 'undefined' || typeof Amplify.configure !== 'function') {
-            // If this still triggers, there is a serious network block or browser issue.
-            document.getElementById('auth-status').textContent = 'Fatal Error: AWS Amplify library failed to load from CDN.';
-            console.error('Amplify object not found or incomplete. Check the network connection.');
+            document.getElementById('auth-status').textContent = 'Fatal Error: AWS Amplify library failed to load or is incomplete.';
+            console.error('Amplify object not found or incomplete. Check the network connection or try a hard refresh.');
             throw new Error('AWS Amplify not initialized.');
         }
 
