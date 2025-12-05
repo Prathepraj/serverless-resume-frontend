@@ -1,6 +1,0 @@
-# Dependency folders ignored in deployment
-node_modules/
-
-# Operating system generated files
-.DS_Store
-*.log
